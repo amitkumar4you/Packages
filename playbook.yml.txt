@@ -1,0 +1,32 @@
+---
+- name: Execute pam script
+  hosts: localhost
+  tasks:
+    - name: including tasks
+      import_tasks: osfile.yml
+
+- name: Testing Param
+     shell: grep -i "retry=3" /etc/pam.d/*
+     register: result.retry
+     failed_when: diff_cmd.rc == 0 or diff_cmd.rc >= 2
+   - shell: grep -i "minlen=15" /etc/pam.d/*
+     register: result.minlen
+   - shell: grep -i "minclass=2" /etc/pam.d/*
+     register: result.minclass
+   - shell: grep -i "min=disabled,15,15,15,15" /etc/pam.d/*
+     register: result.min
+   - shell: grep -i "PASS_MAX_DAYS" /etc/pam.d/*
+     register: result.PASS_MAX_DAYS
+   - shell: grep -i "PASS_MIN_LEN" /etc/pam.d/*
+     register: result.PASS_MIN_LEN
+   - name: getting Values from server
+     shell:  echo -e "{{ result.retry }}" >> /tmp/pass_test
+     delegate_to:  localhost
+   - shell:  echo -e "{{ result.minlen }}" >> /tmp/pass_test
+     delegate_to:  localhost
+   - shell:  echo -e "{{ result.minclass }}" >> /tmp/pass_test
+     delegate_to:  localhost
+   - shell:  echo -e "{{  result.PASS_MAX_DAYS }}" >> /tmp/pass_test
+     delegate_to:  localhost
+   - shell:  echo -e "{{ result.PASS_MIN_LEN }}" >> /tmp/pass_test
+     delegate_to:  localhost
